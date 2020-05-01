@@ -22,7 +22,7 @@ score_label = FONT.render(f"Score: {score}", 1, (250, 250, 250))
 # While setting up our variables, let's load our images
 FILE_FORMAT = "png"
 COIN = "helicopterCoin" + FILE_FORMAT
-CLOUD =
+CLOUD = "helicoptercloud" + FILE_FORMAT
 
 # Creating the screen and setting it up (or Suface object, in technical terms)
 WIN = pygame.display.set_mode((HEIGHT, WIDTH))  # Creates the screen object and stores
