@@ -40,10 +40,25 @@ class Game:
         self.WIN = WIN
         self.COIN = COIN
         self.score = score
+        self.clouds_list = []
+        self.number_of_clouds = 50
+        self.coins_list = []
+        self.coins = 50
+        global number_of_clouds
+        global clouds_list
 
     def score_label_on_screen(self):
         WIN.blit(score_label, (WIDTH - score_label.get_width() - 10, 0 + score_label.get_width() / 8 - 20))
 
+    def out_of_screen(self):
+        for cloud in self.clouds_list:
+            if cloud.x + cloud.get_width() =
+
+class Player:
+    def __init__(self, x, y):
+        self.WIN = WIN
+        self.x = x
+        self.y = y
 
 # Let's create some objects that belong to our previously created classes
 controller = Game
@@ -54,6 +69,13 @@ clock = pygame.time.Clock()
 # Create a loop that makes sure our code is repeated until the end
 while True:
     WIN.blit(BG, (0, 0))
+
+    for clouds in number_of_clouds:
+        clouds_list.append(clouds)
+
+    if len(clouds_list) == 0:
+        number_of_clouds += 25
+
     for event in pygame.event.get():  # For every type of event python can register, do the following code
         if event.type == pygame.QUIT:  # See if the event type is equal to the type of event that makes you quit (
             # pygame.quit())
