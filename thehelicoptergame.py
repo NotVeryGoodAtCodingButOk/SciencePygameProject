@@ -52,7 +52,9 @@ class Game:
 
     def out_of_screen(self):
         for cloud in self.clouds_list:
-            if cloud.x + cloud.get_width() =
+            if cloud.x + cloud.get_width() == 0:
+
+
 
 class Player:
     def __init__(self, x, y):
@@ -60,8 +62,20 @@ class Player:
         self.x = x
         self.y = y
 
+    def check_for_keypress(self):
+        keypress = pygame.key.get_pressed()
+        if keypress[pygame.K_UP]:
+            pass
+        if keypress[pygame.K_DOWN]:
+            pass
+        if keypress[pygame.K_RIGHT]:
+            pass
+        if keypress[pygame.K_LEFT]:
+            pass
+
 # Let's create some objects that belong to our previously created classes
 controller = Game
+keyPressChecker = Player(30 + CLOUD.get_width(), 400)
 
 # Creating a clock object, which lets us schedule the screen refresh
 clock = pygame.time.Clock()
@@ -82,5 +96,6 @@ while True:
             pygame.quit()  # Quit the screen
             exit()  # Exits any current python project, from the sys module we imported earlier
     controller.score_label_on_screen(controller)
+    controller.check_for_keypress()
 
     pygame.display.update()  # Update the display
