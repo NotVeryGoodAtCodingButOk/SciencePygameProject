@@ -21,6 +21,7 @@ score_label = FONT.render(f"Score: {score}", 1, (250, 250, 250))
 
 # While setting up our variables, let's set the names of our images. Also, lets load them up.
 FILE_FORMAT = ".png"
+HELICOPTER_NAME = "helicopterHelicopter"
 COIN_NAME = "helicopterCoin" + FILE_FORMAT
 CLOUD_NAME = "helicoptercloud" + FILE_FORMAT
 BG_NAME = "backgroundHelicopter" + FILE_FORMAT
@@ -28,6 +29,7 @@ BG_NAME = "backgroundHelicopter" + FILE_FORMAT
 COIN = pygame.image.load(COIN_NAME)
 CLOUD = pygame.image.load(CLOUD_NAME)
 BG = pygame.image.load(BG_NAME)
+HELICOPTER = HELICOPTER_NAME + FILE_FORMAT
 
 # Creating the screen and setting it up (or Surface object, in technical terms)
 WIN = pygame.display.set_mode((HEIGHT, WIDTH))  # Creates the screen object and stores
@@ -40,20 +42,30 @@ class Game:
         self.WIN = WIN
         self.COIN = COIN
         self.score = score
-        self.clouds_list = []
-        self.number_of_clouds = 50
         self.coins_list = []
         self.coins = 50
-        global number_of_clouds
-        global clouds_list
+
 
     def score_label_on_screen(self):
         WIN.blit(score_label, (WIDTH - score_label.get_width() - 10, 0 + score_label.get_width() / 8 - 20))
 
+
+class Cloud:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.WIN = WIN
+        self.clouds_list = []
+        self.number_of_clouds = 500
+
+    def create_clouds(self):
+        for cloud in self.clouds_list:
+            WIN.blit(CLOUD, (self.x, self.y))
+
     def out_of_screen(self):
         for cloud in self.clouds_list:
             if cloud.x + cloud.get_width() == 0:
-
+                self.clouds_list.remove(cloud)
 
 
 class Player:
@@ -61,10 +73,11 @@ class Player:
         self.WIN = WIN
         self.x = x
         self.y = y
+        self.HELICOPTER = HELICOPTER
 
     def check_for_keypress(self):
         keypress = pygame.key.get_pressed()
-        if keypress[pygame.K_UP]:
+        if keypress[pygame.K_UP] + 5 > 0:
             pass
         if keypress[pygame.K_DOWN]:
             pass
@@ -74,8 +87,8 @@ class Player:
             pass
 
 # Let's create some objects that belong to our previously created classes
-controller = Game
-keyPressChecker = Player(30 + CLOUD.get_width(), 400)
+controller = Game()
+sbPlayer = Player(30 + CLOUD.get_width(), 400)
 
 # Creating a clock object, which lets us schedule the screen refresh
 clock = pygame.time.Clock()
@@ -84,18 +97,17 @@ clock = pygame.time.Clock()
 while True:
     WIN.blit(BG, (0, 0))
 
-    for clouds in number_of_clouds:
-        clouds_list.append(clouds)
+    for clouds in controller.number_of_clouds:
+        controller.clouds_list.append(clouds)
 
-    if len(clouds_list) == 0:
-        number_of_clouds += 25
+    if len(controller.clouds_list) == 0:
+        controller.number_of_clouds += 25
 
     for event in pygame.event.get():  # For every type of event python can register, do the following code
         if event.type == pygame.QUIT:  # See if the event type is equal to the type of event that makes you quit (
             # pygame.quit())
             pygame.quit()  # Quit the screen
             exit()  # Exits any current python project, from the sys module we imported earlier
-    controller.score_label_on_screen(controller)
-    controller.check_for_keypress()
+    controller.score_label_on_screen()
 
     pygame.display.update()  # Update the display
