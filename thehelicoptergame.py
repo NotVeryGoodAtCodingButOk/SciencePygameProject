@@ -5,9 +5,8 @@
 
 # Import the modules we will be using for this project.
 import pygame
-from time import sleep
 from sys import exit
-from os import path
+import random
 
 # Initialize (or enable) all of the pygame functionality!
 pygame.mixer.init()
@@ -16,8 +15,11 @@ pygame.font.init()
 # Define some of the variables we will be using
 HEIGHT, WIDTH = (800, 800)  # Creates a variable that stores our screen width and height
 score = 0
-FONT = pygame.font.SysFont('arial', 50)
-score_label = FONT.render(f"Score: {score}", 1, (250, 250, 250))
+PI = 3.1419
+out_of_screen = False
+arial = pygame.font.SysFont('arial', 50)
+score_label = arial.render(f"Score: {score}", 1, (1, 1, 1))
+level_tag = arial.render()
 
 # While setting up our variables, let's set the names of our images. Also, lets load them up.
 FILE_FORMAT = ".png"
@@ -29,7 +31,11 @@ BG_NAME = "backgroundHelicopter" + FILE_FORMAT
 COIN = pygame.image.load(COIN_NAME)
 CLOUD = pygame.image.load(CLOUD_NAME)
 BG = pygame.image.load(BG_NAME)
-HELICOPTER = HELICOPTER_NAME + FILE_FORMAT
+HELICOPTER = pygame.image.load(HELICOPTER_NAME + FILE_FORMAT)
+
+clouds_list = []
+wave_length = 100
+number_of_clouds = len(clouds_list)
 
 # Creating the screen and setting it up (or Surface object, in technical terms)
 WIN = pygame.display.set_mode((HEIGHT, WIDTH))  # Creates the screen object and stores
@@ -45,7 +51,6 @@ class Game:
         self.coins_list = []
         self.coins = 50
 
-
     def score_label_on_screen(self):
         WIN.blit(score_label, (WIDTH - score_label.get_width() - 10, 0 + score_label.get_width() / 8 - 20))
 
@@ -58,15 +63,6 @@ class Cloud:
         self.clouds_list = []
         self.number_of_clouds = 500
 
-    def create_clouds(self):
-        for cloud in self.clouds_list:
-            WIN.blit(CLOUD, (self.x, self.y))
-
-    def out_of_screen(self):
-        for cloud in self.clouds_list:
-            if cloud.x + cloud.get_width() == 0:
-                self.clouds_list.remove(cloud)
-
 
 class Player:
     def __init__(self, x, y):
@@ -74,40 +70,70 @@ class Player:
         self.x = x
         self.y = y
         self.HELICOPTER = HELICOPTER
+        self.mask = pygame.mask.from_surface(HELICOPTER)
 
     def check_for_keypress(self):
         keypress = pygame.key.get_pressed()
-        if keypress[pygame.K_UP] + 5 > 0:
-            pass
-        if keypress[pygame.K_DOWN]:
-            pass
-        if keypress[pygame.K_RIGHT]:
-            pass
-        if keypress[pygame.K_LEFT]:
-            pass
+        if keypress[pygame.K_UP] and sbPlayer.y - 7 > 0:
+            self.y -= 7
+        if keypress[pygame.K_DOWN] and sbPlayer.y + 7 + HELICOPTER.get_height() < HEIGHT:
+            self.y += 7
+        if keypress[pygame.K_RIGHT] and sbPlayer.x + 7 + HELICOPTER.get_width() < 800:
+            self.x += 7
+        if keypress[pygame.K_LEFT] and sbPlayer.x - 7 > 0:
+            self.x -= 7
+
 
 # Let's create some objects that belong to our previously created classes
 controller = Game()
-sbPlayer = Player(30 + CLOUD.get_width(), 400)
+sbPlayer = Player(30 + HELICOPTER.get_width(), 400)
 
 # Creating a clock object, which lets us schedule the screen refresh
 clock = pygame.time.Clock()
 
+
 # Create a loop that makes sure our code is repeated until the end
-while True:
-    WIN.blit(BG, (0, 0))
+def mainloop(wave_length=wave_length):
+    running = True
 
-    for clouds in controller.number_of_clouds:
-        controller.clouds_list.append(clouds)
+    while running:
 
-    if len(controller.clouds_list) == 0:
-        controller.number_of_clouds += 25
+        WIN.blit(BG, (0, 0))
 
-    for event in pygame.event.get():  # For every type of event python can register, do the following code
-        if event.type == pygame.QUIT:  # See if the event type is equal to the type of event that makes you quit (
-            # pygame.quit())
-            pygame.quit()  # Quit the screen
-            exit()  # Exits any current python project, from the sys module we imported earlier
-    controller.score_label_on_screen()
+        def draw_clouds():
+            for cloud in range(wave_length):
+                cloud = Cloud(random.randint(200, 13000), random.randint(0, 800 - CLOUD.get_width()))
+                clouds_list.append(cloud)
 
-    pygame.display.update()  # Update the display
+        for cloud in clouds_list:
+            if cloud.x <= -CLOUD.get_width() + 10:
+                clouds_list.remove(cloud)
+            else:
+                WIN.blit(CLOUD, (cloud.x, cloud.y))
+                cloud.x -= 3.1419 + PI / PI
+
+        if len(clouds_list) == 0:
+            wave_length += 25
+            draw_clouds()
+
+        WIN.blit(HELICOPTER, (sbPlayer.x, sbPlayer.y))
+
+        for event in pygame.event.get():  # For every type of event python can register, do the following code
+            if event.type == pygame.QUIT:  # See if the event type is equal to the type of event that makes you quit
+                running = False
+                pygame.quit()  # Quit the screen
+                exit()  # Exits any current python project, from the sys module we imported earlier
+        controller.score_label_on_screen()
+        sbPlayer.check_for_keypress()
+
+        pygame.display.update()  # Update the display
+
+
+def pre_game_screen():
+    starting = False
+    while not starting:
+        break
+
+
+#  pre_game_screen()
+mainloop()
