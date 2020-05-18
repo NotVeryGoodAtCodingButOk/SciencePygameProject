@@ -79,6 +79,7 @@ class Coin:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.mask = pygame.mask.from_surface(COIN)
 
     def draw(self):
         WIN.blit(COIN, (self.x, self.y))
@@ -132,9 +133,21 @@ def mainloop(wave_length=wave_length):
                 WIN.blit(CLOUD, (cloud.x, cloud.y))
                 cloud.x -= 3.1419 + PI / PI
 
-        for coin in range(wave_length):
-            coin = Coin(random.randint(WIDTH * 2, 30000), random.randint(0, HEIGHT - COIN.get_height()))
-            coins_list.append(coin)
+        def draw_coins():
+            for coin in range(0, wave_length):
+                coin = Coin(random.randint(WIDTH * 2, 50000), random.randint(0, HEIGHT - COIN.get_height()))
+                coins_list.append(coin)
+
+        for coin in coins_list:
+            if coin.x <= -COIN.get_width() + 10:
+                coins_list.remove(coin)
+            else:
+                WIN.blit(COIN, (coin.x, coin.y))
+                coin.x -= 3.1419 + PI / PI
+            # if coin.x + COIN.get_width() <= sbPlayer.x + HELICOPTER.get_width() and coin.x
+
+        if len(coins_list) == 0:
+            draw_coins()
 
         if len(clouds_list) == 0:
             wave_length += 25
