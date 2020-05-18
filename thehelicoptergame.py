@@ -81,8 +81,7 @@ class Coin:
         self.y = y
 
     def draw(self):
-
-
+        WIN.blit(COIN, (self.x, self.y))
 
 
 class Player:
@@ -133,10 +132,9 @@ def mainloop(wave_length=wave_length):
                 WIN.blit(CLOUD, (cloud.x, cloud.y))
                 cloud.x -= 3.1419 + PI / PI
 
-        for coin in wave_length:
+        for coin in range(wave_length):
             coin = Coin(random.randint(WIDTH * 2, 30000), random.randint(0, HEIGHT - COIN.get_height()))
             coins_list.append(coin)
-
 
         if len(clouds_list) == 0:
             wave_length += 25
